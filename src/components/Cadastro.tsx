@@ -6,6 +6,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Styles from '../App.module.css';
 import axios from 'axios';
+import { classicNameResolver } from 'typescript';
 
 const Cadastro = () => {
 
@@ -13,9 +14,18 @@ const Cadastro = () => {
     const [email, setEmail] = useState<string>("");
     const [cpf, setCpf] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+     const [nomeError, setNomeError] = useState<string>("");
+    const [emailError, setEmailError] = useState<string>("");
+    const [cpfError, setCpfError] = useState<string>("");
+    const [passwordError, setPasswordError] = useState<string>("");
 
     const CadastrarUsuario = (e: FormEvent) => {
         e.preventDefault();
+         
+        setNomeError("")
+        setEmailError("")
+        setCpfError("")
+        setPasswordError("")
 
         const dados = {
             nome: nome,
@@ -24,17 +34,28 @@ const Cadastro = () => {
             password: password
         }
 console.log(dados)
-        axios.post('http://10.137.9.131:8000/api/store',
-        dados,
-         {
-            headers: {
-            "Accept": "application/json",
-            "Content-Type":"application/json"
+axios.post('http://10.137.9.136:8001/api/store', dados,
+{
+    headers: { "Accept": "application/json", "Content-Type": "application/json" }
+}).then(function (response) {
+    if (response.data.success === false) {
 
-            }
-
-         }).then(function(response){
-            window.location.href = "/listagem";
+        if ('nome' in response.data.error) {
+            setNomeError(response.data.error.nome[0])
+        }
+        if ('email' in response.data.error) {
+            setEmailError(response.data.error.nome[0])
+        }
+        if ('cpf' in response.data.error) {
+            setCpfError(response.data.error.nome[0])
+        }
+        if ('password' in response.data.error) {
+            setPasswordError(response.data.error.nome[0])
+        }
+    }
+          else{
+           window.location.href = "/listagem";
+        }
          }).catch(function (error) {
             console.log(error);
          })
@@ -79,7 +100,9 @@ console.log(dados)
                                                         className='form-control'
                                                         required
                                                         onChange={handleState}
-                                                    /></div>
+                                                    />
+                                                    <div className='text-danger'>{nomeError}</div>
+                                                    </div>
 
                                                 <div className='col-6'>
                                                     <label htmlFor="email" className='form-label'>E-mail</label>
@@ -88,7 +111,9 @@ console.log(dados)
                                                         className='form-control'
                                                         required
                                                         onChange={handleState}
-                                                    /></div>
+                                                    />
+                                                     <div className='text-danger'>{emailError}</div>
+                                                    </div>
 
                                                 <div className='col-6'>
                                                     <label htmlFor="cpf" className='form-label'>CPF</label>
@@ -97,7 +122,9 @@ console.log(dados)
                                                         className='form-control'
                                                         required
                                                         onChange={handleState}
-                                                    /></div>
+                                                    />
+                                                     <div className='text-danger'>{cpfError}</div>
+                                                    </div>
 
                                                 <div className='col-6'>
                                                     <label htmlFor="password" className='form-label'>Senha</label>
@@ -106,7 +133,9 @@ console.log(dados)
                                                         className='form-control'
                                                         required
                                                         onChange={handleState}
-                                                    /></div>
+                                                    />
+                                                     <div className='text-danger'>{passwordError}</div>
+                                                    </div>
 
                                                 <div className='col-12' >
                                                     <button type='submit'
